@@ -17,7 +17,8 @@ router.post('/', async (req, res) => {
                 email: user.email,
                 // other safe user fields
             };
-            res.json({ user: userData });
+            req.session.userId = user.userId
+            res.json({ user});
 
             // Add session or token creation here if applicable
         }
@@ -25,5 +26,20 @@ router.post('/', async (req, res) => {
         res.status(500).json({ message: "An error occurred during login." });
     }
 });
+
+router.get('/profile', async (req, res) => {
+    console.log(req.session.userId)
+    try {
+        let user = await User.findOne({
+            where: {
+                userId: req.session.userId
+            }
+        })
+        res.json(user)
+    } catch {
+        res.json(null)
+    }
+})
+
 
 module.exports = router;
