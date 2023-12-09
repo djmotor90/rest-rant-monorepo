@@ -17,10 +17,10 @@ function LoginForm() {
         setCredentials({ ...credentials, [e.target.name]: e.target.value });
     };
 
+   
     async function handleSubmit(e) {
         e.preventDefault();
-        setErrorMessage(null); // Clear existing error message
-
+    
         try {
             const response = await fetch(`http://localhost:5001/authentication/`, {
                 method: 'POST',
@@ -29,19 +29,24 @@ function LoginForm() {
                 },
                 body: JSON.stringify(credentials)
             });
-
+    
             const data = await response.json();
-
-            if (response.status === 200) {
+    
+        
+            if (response.ok) {  
                 setCurrentUser(data.user);
+                console.log(data.token);
+                localStorage.setItem('token', data.token);
                 history.push(`/`);
             } else {
                 setErrorMessage(data.message);
             }
         } catch (error) {
-            setErrorMessage('Unable to connect to the server. Please try again later.');
+            console.error('An error occurred:', error);
+            setErrorMessage('An error occurred, please try again');
         }
     }
+     
 
     return (
         <main>
